@@ -1,4 +1,4 @@
-package fi.haagahelia.audioplayer.domain;
+package fi.haagahelia.musicapp.domain;
 
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -12,7 +12,7 @@ import jakarta.persistence.GenerationType;
 public class AppUser {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
     

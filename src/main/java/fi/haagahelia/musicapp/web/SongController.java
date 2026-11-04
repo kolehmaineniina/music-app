@@ -1,4 +1,4 @@
-package fi.haagahelia.audioplayer.web;
+package fi.haagahelia.musicapp.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import fi.haagahelia.audioplayer.domain.Song;
-import fi.haagahelia.audioplayer.domain.SongRepository;
+import fi.haagahelia.musicapp.domain.Song;
+import fi.haagahelia.musicapp.domain.SongRepository;
 
 @Controller
 public class SongController {
@@ -21,7 +21,7 @@ public class SongController {
 
     @GetMapping("/songs")
     public String listSongs(Model model) {
-        model.addAttribute("songs", songRepository.findAll()); //findByUploaderUsername 
+        model.addAttribute("songs", songRepository.findAll()); //findByUsername 
         return "songlist";
     }
 

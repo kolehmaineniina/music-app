@@ -3,6 +3,7 @@ package fi.haagahelia.musicapp;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import fi.haagahelia.musicapp.domain.AppUser;
 import fi.haagahelia.musicapp.domain.AppUserRepository;
@@ -18,7 +19,8 @@ public class DataInitializer {
     public CommandLineRunner demoData(
             SongRepository songRepository,
             AppUserRepository appUserRepository,
-            CollectionEntryRepository collectionEntryRepository) {
+            CollectionEntryRepository collectionEntryRepository,
+            PasswordEncoder passwordEncoder) {
 
         return args -> {
 
@@ -31,40 +33,17 @@ public class DataInitializer {
                 new Song("Song B", "Artist B", 2022)
             );
 
-            // Save users
             AppUser alice = appUserRepository.save(
-                new AppUser("alice", "testpassword", "alice@example.com", "USER")
+                new AppUser("alice", passwordEncoder.encode("testpassword"), "alice@example.com", "ADMIN")
             );
-
             AppUser bob = appUserRepository.save(
-                new AppUser("bob", "testpassword", "bob@example.com", "USER")
+                new AppUser("bob", passwordEncoder.encode("testpassword"), "bob@example.com", "USER")
             );
 
-            // Add songs to user collections
             collectionEntryRepository.save(new CollectionEntry(alice, songA));
             collectionEntryRepository.save(new CollectionEntry(alice, songB));
             collectionEntryRepository.save(new CollectionEntry(bob, songA));
 
-            // Test repository methods
-            System.out.println("Saved songs: " + songRepository.count());
-            System.out.println("Saved users: " + appUserRepository.count());
-            System.out.println("Collection entries: " + collectionEntryRepository.count());
-
-            System.out.println("Alice's collection:");
-
-            for (CollectionEntry entry :
-                    collectionEntryRepository.findByUser_Username("alice")) {
-
-                System.out.println(entry.getSong().getSongName());
-            }
-
-            System.out.println("Bob's collection:");
-
-            for (CollectionEntry entry :
-                    collectionEntryRepository.findByUser(bob)) {
-
-                System.out.println(entry.getSong().getSongName());
-            }
         };
     }
 }

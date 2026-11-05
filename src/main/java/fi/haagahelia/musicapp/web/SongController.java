@@ -21,7 +21,7 @@ public class SongController {
 
     @GetMapping("/songs")
     public String listSongs(Model model) {
-        model.addAttribute("songs", songRepository.findAll()); //findByUsername 
+        model.addAttribute("songs", songRepository.findAll()); 
         return "songlist";
     }
 

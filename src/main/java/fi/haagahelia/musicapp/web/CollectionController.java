@@ -1,5 +1,6 @@
 package fi.haagahelia.musicapp.web;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +17,12 @@ public class CollectionController {
     }
 
     @GetMapping("/collection")
-    public String showCollection(Model model) {
-
+    public String showCollection(Model model, Authentication authentication) {
+        String username = authentication.getName();
+        
         model.addAttribute(
             "collection",
-            collectionEntryRepository.findByUser_Username("alice")
+            collectionEntryRepository.findByUser_Username(username)
         );
 
         return "collection";

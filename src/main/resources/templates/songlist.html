@@ -2,21 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Songs</title>
+    <title>Song Catalog</title>
 </head>
 <body>
 
     <h1>Song Catalog</h1>
-
-    <ul>
-        <li th:each="song : ${songs}">
-            <span th:text="${song.title}"></span>
-            <span th:text="${song.artist}"></span>
-            <form th:action="@{/collection/add/{id}(id=${song.id})}" method="post">
-                <button type="submit">Add to collection</button>
-            </form>
-        </li>
-    </ul>
 
     <form th:action="@{/songs}" method="get">
         <input type="text"
@@ -27,6 +17,43 @@
         <button type="submit">Search</button>
         <a th:href="@{/songs}">Clear</a>
     </form>
-
+    <br>
+    <table border="1" cellpadding="2">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Year</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="song : ${songs}">
+                <td th:text="${song.title}"></td>
+                <td th:text="${song.artist}"></td>
+                <td th:text="${song.releaseYear}"></td>
+                <td>
+                    <!-- Anonymous visitor -->
+                    <a th:if="${!loggedIn}" th:href="@{/login}">
+                        Log in to add
+                    </a>
+                    <!-- Logged in, song not in collection -->
+                    <form th:if="${loggedIn and !collectedSongIds.contains(song.id)}"
+                        th:action="@{/collection/add/{id}(id=${song.id})}"
+                        method="post">
+                        <button type="submit">Add to collection</button>
+                    </form>
+                    <!-- Logged in, song already in collection -->
+                    <span th:if="${loggedIn and collectedSongIds.contains(song.id)}">
+                        Already in collection
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <div>
+        <a th:if="${loggedIn}" th:href="@{/songs/add}">Add new song</a>
+    </div>
 </body>
 </html>

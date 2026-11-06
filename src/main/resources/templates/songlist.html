@@ -6,14 +6,27 @@
 </head>
 <body>
 
-    <h1>My Songs</h1>
+    <h1>Song Catalog</h1>
 
     <ul>
         <li th:each="song : ${songs}">
-            <span th:text="${song.songName}"></span>
+            <span th:text="${song.title}"></span>
             <span th:text="${song.artist}"></span>
+            <form th:action="@{/collection/add/{id}(id=${song.id})}" method="post">
+                <button type="submit">Add to collection</button>
+            </form>
         </li>
     </ul>
+
+    <form th:action="@{/songs}" method="get">
+        <input type="text"
+            name="search"
+            th:value="${search}"
+            placeholder="Search by title or artist">
+
+        <button type="submit">Search</button>
+        <a th:href="@{/songs}">Clear</a>
+    </form>
 
 </body>
 </html>

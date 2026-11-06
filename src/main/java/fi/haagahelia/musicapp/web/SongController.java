@@ -1,11 +1,13 @@
 package fi.haagahelia.musicapp.web;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongRepository;
@@ -20,8 +22,20 @@ public class SongController {
     }
 
     @GetMapping("/songs")
-    public String listSongs(Model model) {
-        model.addAttribute("songs", songRepository.findAll()); 
+    public String showSongs(
+        Authentication authentication,
+        Model model, 
+        @RequestParam(name = "search", required = false) String search
+    ) {
+
+        if (search == null || search.isBlank()) {
+            model.addAttribute("songs", songRepository.findAll()); 
+        } else {
+            model.addAttribute("songs", songRepository.findByTitleContainingIgnoreCaseOrArtistContainingIgnoreCase(search.trim(), search.trim()));
+        }
+
+        model.addAttribute("search", search);
+       
         return "songlist";
     }
 

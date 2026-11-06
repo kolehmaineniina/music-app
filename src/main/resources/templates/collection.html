@@ -5,8 +5,9 @@
     <title>My Collection</title>
 </head>
 <body>
-    <p> Logged in as: <span sec:authentication="name"></span></p>
-    <h1>My Collection</h1>
+    <h1>
+        <span sec:authentication="name"></span>'s Collection
+    </h1>
     <table>
         <thead>
             <tr>
@@ -18,12 +19,14 @@
 
         <tbody>
             <tr th:each="entry : ${collection}">
-                <td th:text="${entry.song.songName}"></td>
+                <td th:text="${entry.song.title}"></td>
                 <td th:text="${entry.song.artist}"></td>
                 <td th:text="${entry.song.releaseYear}"></td>
             </tr>
         </tbody>
     </table>
-
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
 </body>
 </html>

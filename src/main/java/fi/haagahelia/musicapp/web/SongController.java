@@ -16,16 +16,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import fi.haagahelia.musicapp.domain.CollectionEntryRepository;
 import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongRepository;
+import fi.haagahelia.musicapp.service.SongService;
 
 @Controller
 public class SongController {
 
     private final SongRepository songRepository;
     private final CollectionEntryRepository collectionEntryRepository;
+    private final SongService songService;
 
-    public SongController(SongRepository songRepository, CollectionEntryRepository collectionEntryRepository) {
+    public SongController(SongRepository songRepository, CollectionEntryRepository collectionEntryRepository, SongService songService) {
         this.songRepository = songRepository;
         this.collectionEntryRepository = collectionEntryRepository;
+        this.songService = songService;
     }
 
 @GetMapping("/songs")
@@ -79,9 +82,9 @@ public String showSongs(
     }
 
     @PostMapping("songs/save")
-    public String saveSong(@ModelAttribute Song song) {
-        songRepository.save(song);
-        return "redirect:/songs";
+    public String saveSong(@ModelAttribute Song song, Principal principal) {
+        songService.createSongAndAddToCollection(song, principal.getName());
+        return "redirect:/collection";
     }
 
 }

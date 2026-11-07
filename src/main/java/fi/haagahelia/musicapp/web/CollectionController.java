@@ -1,5 +1,7 @@
 package fi.haagahelia.musicapp.web;
 
+import java.security.Principal;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,8 +32,8 @@ public class CollectionController {
     }
 
     @GetMapping("/collection")
-    public String showCollection(Model model, Authentication authentication) {
-        String username = authentication.getName();
+    public String showCollection(Model model, Principal principal) {
+        String username = principal.getName();
         
         model.addAttribute(
             "collection",
@@ -42,8 +44,8 @@ public class CollectionController {
     }
 
     @PostMapping("/collection/add/{id}")
-    public String addToCollection(@PathVariable Long id, Authentication authentication) {
-        AppUser user = appUserRepository.findByUsername(authentication.getName());
+    public String addToCollection(@PathVariable Long id, Principal principal) {
+        AppUser user = appUserRepository.findByUsername(principal.getName());
         Song song = songRepository.findById(id).orElseThrow();
         
         if (!collectionEntryRepository.existsByUserAndSong(user, song)) {

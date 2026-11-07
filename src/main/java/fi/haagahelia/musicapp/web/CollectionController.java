@@ -1,8 +1,8 @@
 package fi.haagahelia.musicapp.web;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.security.Principal;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +15,8 @@ import fi.haagahelia.musicapp.domain.CollectionEntry;
 import fi.haagahelia.musicapp.domain.CollectionEntryRepository;
 import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongRepository;
+
+
 
 
 @Controller
@@ -52,6 +54,19 @@ public class CollectionController {
             collectionEntryRepository.save(new CollectionEntry(user, song));
         }  
 
+        return "redirect:/collection";
+    }
+
+    @PostMapping("/collection/remove/{id}")
+    public String removeFromCollection(@PathVariable Long id, Principal principal) {
+        CollectionEntry entry = collectionEntryRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("Entry not found"));
+
+        if (!entry.getUser().getUsername().equals(principal.getName())) {
+        throw new AccessDeniedException("Cannot remove entry from another user's collection");
+        }
+
+        collectionEntryRepository.delete(entry);
+        
         return "redirect:/collection";
     }
     

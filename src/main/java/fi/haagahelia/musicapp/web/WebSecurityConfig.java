@@ -23,6 +23,7 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/css/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/songs").permitAll()
+                .requestMatchers("/register").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

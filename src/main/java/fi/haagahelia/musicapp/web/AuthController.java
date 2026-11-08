@@ -1,5 +1,6 @@
 package fi.haagahelia.musicapp.web;
 
+import fi.haagahelia.musicapp.service.RegistrationException;
 import fi.haagahelia.musicapp.service.RegistrationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,47 +38,23 @@ public class AuthController {
             @Valid @ModelAttribute("signupform") SignUpForm signUpForm,
             BindingResult bindingResult) {
 
-        // Annotation validation
         if (bindingResult.hasErrors()) {
             return "signup";
         }
 
-        // Manual validation
-        if (!signUpForm.getPassword().equals(signUpForm.getPasswordConfirmed())) {
+        try {
+            registrationService.register(signUpForm);
+        } catch (RegistrationException exception) {
             bindingResult.rejectValue(
-                "passwordConfirmed",
-                "password.mismatch",
-                "Passwords do not match"
+                exception.getField(),
+                "registration.error",
+                exception.getMessage()
             );
-        }
 
-        if (registrationService.usernameExists(signUpForm.getUsername())) {
-            bindingResult.rejectValue(
-                "username",
-                "username.exists",
-                "Username is already taken"
-            );
-        }
-
-        if (registrationService.emailExists(signUpForm.getEmail())) {
-            bindingResult.rejectValue(
-                "email",
-                "email.exists",
-                "Email address is already registered"
-            );
-        }
-
-        // Manual validation check; if hasErrors() == true -> return to signup
-        if (bindingResult.hasErrors()) {
             return "signup";
         }
-
-        registrationService.register(signUpForm);
 
         return "redirect:/login";
     }
-
-    
-    
 
 }

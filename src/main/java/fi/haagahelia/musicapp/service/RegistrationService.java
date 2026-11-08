@@ -31,6 +31,28 @@ public class RegistrationService {
 
     public void register(SignUpForm form) {
 
+
+        if (usernameExists(form.getUsername())) {
+            throw new RegistrationException(
+                "username",
+                "Username is already taken"
+            );
+        }
+
+        if (emailExists(form.getEmail())) {
+            throw new RegistrationException(
+                "email",
+                "Email address is already registered"
+            );
+        }
+
+        if (!form.getPassword().equals(form.getPasswordConfirmed())) {
+            throw new RegistrationException(
+                "passwordConfirmed",
+                "Passwords do not match"
+            );
+        }
+
         AppUser user = new AppUser();
 
         user.setUsername(form.getUsername());

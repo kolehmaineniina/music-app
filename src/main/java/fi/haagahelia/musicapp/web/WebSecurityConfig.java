@@ -20,11 +20,23 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/css/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/songs").permitAll()
-                .requestMatchers("/register").permitAll()
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/songs",
+                    "/login",
+                    "/register",
+                    "/css/**",
+                    "/h2-console/**"
+                ).permitAll()
                 .anyRequest().authenticated()
+            )
+
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**")
+            )
+
+            .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.sameOrigin())
             )
             .formLogin(form -> form
                 .loginPage("/login")

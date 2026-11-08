@@ -2,13 +2,17 @@ package fi.haagahelia.musicapp.domain;
 
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
-@Entity(name= "users")
-@Table(name="users")
+@Entity
+@Table(name="users",
+    check = @CheckConstraint(constraint = "role IN ('USER', 'ADMIN')")
+)
 public class AppUser {
 
     @Id
@@ -16,10 +20,10 @@ public class AppUser {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
     
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(name = "username", nullable = false, unique = true, length = 30)
     private String username;
     
-    @Column(name = "password", nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
     @Column(name = "email", nullable = false, unique = true)

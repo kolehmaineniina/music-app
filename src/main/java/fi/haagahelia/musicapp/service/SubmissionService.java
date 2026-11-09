@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.haagahelia.musicapp.domain.AppUser;
 import fi.haagahelia.musicapp.domain.AppUserRepository;
+import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongSubmission;
 import fi.haagahelia.musicapp.domain.SongSubmissionRepository;
 import fi.haagahelia.musicapp.domain.SubmissionForm;
@@ -14,12 +15,15 @@ import fi.haagahelia.musicapp.domain.SubmissionStatus;
 public class SubmissionService {
     private final SongSubmissionRepository songSubmissionRepository;
     private final AppUserRepository appUserRepository;
+    private final SongService songService;
 
     public SubmissionService(
         SongSubmissionRepository songSubmissionRepository,
-        AppUserRepository appUserRepository) {
+        AppUserRepository appUserRepository,
+        SongService songService) {
             this.songSubmissionRepository = songSubmissionRepository;
             this.appUserRepository = appUserRepository;
+            this.songService = songService;
         }
 
     @Transactional 
@@ -51,5 +55,33 @@ public class SubmissionService {
         }
 
         submission.setStatus(SubmissionStatus.REJECTED);
+    }
+
+    @Transactional
+    public void approveSubmission(Long id, SubmissionForm form) {
+
+        SongSubmission submission = songSubmissionRepository.findById(id).orElseThrow(() ->
+            new IllegalArgumentException("Submission not found: " + id));
+
+        if (submission.getStatus() != SubmissionStatus.PENDING) {
+            throw new IllegalStateException("Only pending submissions can be approved");
+        }
+
+        // Retrieve values from form fields (with admin corrections)
+        submission.setTitle(form.getTitle());
+        submission.setArtist(form.getArtist());
+        submission.setReleaseYear(form.getReleaseYear());
+
+        Song song = new Song();
+        song.setTitle(submission.getTitle());
+        song.setArtist(submission.getArtist());
+        song.setReleaseYear(submission.getReleaseYear());
+
+        songService.createSongAndAddToCollection(
+                song,
+                submission.getSubmittedBy()
+        );
+
+        submission.setStatus(SubmissionStatus.APPROVED);
     }
 }

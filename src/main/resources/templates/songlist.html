@@ -80,7 +80,7 @@
             Review Submissions
         </a>
     </div>
-    <a sec:authorize="isAuthenticated() and hasRole('ADMIN')" th:href="@{/submissions/new}" class="btn btn-outline-primary">
+    <a sec:authorize="isAuthenticated() and !hasRole('ADMIN')" th:href="@{/submissions/new}" class="btn btn-outline-primary">
         Suggest a Song
     </a>
 </body>

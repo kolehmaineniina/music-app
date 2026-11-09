@@ -53,8 +53,7 @@ public class SubmissionController {
     
     @GetMapping("/admin/submissions")
     public String showSubmissions(Model model) {
-        model.addAttribute("submissions",
-                submissionRepository.findByStatus(SubmissionStatus.PENDING));
+        model.addAttribute("submissions", submissionRepository.findByStatus(SubmissionStatus.PENDING));
         return "adminsubmissions";
     }
 
@@ -82,9 +81,26 @@ public class SubmissionController {
 
     @PostMapping("/admin/submissions/reject/{id}")
     public String rejectSubmission(@PathVariable Long id) {
-
         submissionService.rejectSubmission(id);
+        return "redirect:/admin/submissions";
+    }  
+    
+    @PostMapping("/admin/submissions/approve/{id}")
+    public String approveSubmission(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("submissionForm") SubmissionForm form,
+            BindingResult bindingResult,
+            Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("reviewMode", true);
+            model.addAttribute("submissionId", id);
+
+            return "submissionform";
+        }
+
+        submissionService.approveSubmission(id, form);
 
         return "redirect:/admin/submissions";
-    }    
+    }
 }

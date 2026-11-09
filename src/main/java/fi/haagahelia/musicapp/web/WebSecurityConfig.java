@@ -42,7 +42,7 @@ public class WebSecurityConfig {
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/collection", true) //!! -> config to route songs -> href:login -> songs
+                .defaultSuccessUrl("/songs", true) //!! -> reroute to original endpoit
                 .permitAll()
             )
             .logout(logout -> logout

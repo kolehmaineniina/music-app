@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.haagahelia.musicapp.domain.AppUser;
-import fi.haagahelia.musicapp.domain.AppUserRepository;
 import fi.haagahelia.musicapp.domain.CollectionEntry;
 import fi.haagahelia.musicapp.domain.CollectionEntryRepository;
 import fi.haagahelia.musicapp.domain.Song;
@@ -13,16 +12,13 @@ import fi.haagahelia.musicapp.domain.SongRepository;
 @Service 
 public class SongService {
     private final SongRepository songRepository;
-    private final AppUserRepository appUserRepository;
     private final CollectionEntryRepository collectionEntryRepository;
     
     public SongService(
             SongRepository songRepository,
-            AppUserRepository appUserRepository,
             CollectionEntryRepository collectionEntryRepository){
         
         this.songRepository = songRepository;
-        this.appUserRepository = appUserRepository;
         this.collectionEntryRepository = collectionEntryRepository;
     }
 
@@ -37,11 +33,10 @@ public class SongService {
     }
 
     @Transactional 
-    public void createSongAndAddToCollection(Song song, String username) {
-        AppUser user = appUserRepository.findByUsername(username);
+    public void createSongAndAddToCollection(Song song, AppUser user) {
         
         if (user == null) {
-            throw new IllegalArgumentException("User " + username + " not found");
+            throw new IllegalArgumentException("User not found");
         }
 
         Song savedSong = createSong(song);

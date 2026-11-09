@@ -11,6 +11,8 @@ import fi.haagahelia.musicapp.domain.SongSubmissionRepository;
 import fi.haagahelia.musicapp.domain.SubmissionForm;
 import fi.haagahelia.musicapp.domain.SubmissionStatus;
 
+// Concurrent transactions: @Version?
+
 @Service 
 public class SubmissionService {
     private final SongSubmissionRepository songSubmissionRepository;

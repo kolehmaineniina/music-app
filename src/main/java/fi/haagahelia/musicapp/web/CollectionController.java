@@ -17,7 +17,7 @@ import fi.haagahelia.musicapp.domain.CollectionEntryRepository;
 import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongRepository;
 
-
+// Consider ControllerService and move business logic there  
 @Controller
 @RequestMapping("/collection")
 public class CollectionController {
@@ -59,10 +59,11 @@ public class CollectionController {
 
     @PostMapping("/remove/{id}")
     public String removeFromCollection(@PathVariable Long id, Principal principal) {
-        CollectionEntry entry = collectionEntryRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("Entry not found"));
+        CollectionEntry entry = collectionEntryRepository.findById(id).orElseThrow(()
+            -> new IllegalArgumentException("Entry not found"));
 
         if (!entry.getUser().getUsername().equals(principal.getName())) {
-        throw new AccessDeniedException("Cannot remove entry from another user's collection");
+            throw new AccessDeniedException("Cannot remove entry from another user's collection");
         }
 
         collectionEntryRepository.delete(entry);

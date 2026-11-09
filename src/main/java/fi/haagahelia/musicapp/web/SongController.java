@@ -19,6 +19,7 @@ import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongRepository;
 import fi.haagahelia.musicapp.service.SongService;
 
+// Consider implementing SongForm DTO (compare SubmissionService)
 @Controller
 @RequestMapping("/songs")
 public class SongController {

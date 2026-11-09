@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import fi.haagahelia.musicapp.domain.CollectionEntryRepository;
@@ -20,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import fi.haagahelia.musicapp.service.SongService;
 
 @Controller
+@RequestMapping("/songs")
 public class SongController {
 
     private final SongRepository songRepository;
@@ -32,7 +34,7 @@ public class SongController {
         this.songService = songService;
     }
 
-    @GetMapping("/songs")
+    @GetMapping
     public String showSongs(
             Authentication authentication,
             Principal principal,
@@ -70,32 +72,32 @@ public class SongController {
         return "songlist";
     }
 
-    @GetMapping("/songs/add")
+    @GetMapping("/add")
     public String addSong(Model model) {
         model.addAttribute("song", new Song());
         return "songform";
     }
 
-    @GetMapping("/songs/edit/{id}")
+    @GetMapping("/edit/{id}")
     public String editSong(@PathVariable Long id, Model model) {
         Song song = songRepository.findById(id).orElseThrow();
         model.addAttribute("song", song);
         return "songform";
     }
 
-    @PostMapping("/songs/update")
+    @PostMapping("/update")
     public String updateSong(@ModelAttribute Song song) {
         songService.updateSong(song.getId(), song);
         return "redirect:/songs";
     }
     
-    @PostMapping("/songs/save")
+    @PostMapping("/save")
     public String saveSong(@ModelAttribute Song song) {
         songService.createSong(song);
         return "redirect:/songs";
     }
 
-    @PostMapping("/songs/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteSong(@PathVariable Long id) {
 
         songService.deleteSong(id);

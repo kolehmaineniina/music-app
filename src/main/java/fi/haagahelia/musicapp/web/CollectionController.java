@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import fi.haagahelia.musicapp.domain.AppUser;
 import fi.haagahelia.musicapp.domain.AppUserRepository;
@@ -17,9 +18,8 @@ import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongRepository;
 
 
-
-
 @Controller
+@RequestMapping("/collection")
 public class CollectionController {
 
     private final SongRepository songRepository;
@@ -33,7 +33,7 @@ public class CollectionController {
         this.songRepository = songRepository;
     }
 
-    @GetMapping("/collection")
+    @GetMapping
     public String showCollection(Model model, Principal principal) {
         String username = principal.getName();
         
@@ -45,7 +45,7 @@ public class CollectionController {
         return "collection";
     }
 
-    @PostMapping("/collection/add/{id}")
+    @PostMapping("/add/{id}")
     public String addToCollection(@PathVariable Long id, Principal principal) {
         AppUser user = appUserRepository.findByUsername(principal.getName());
         Song song = songRepository.findById(id).orElseThrow();
@@ -57,7 +57,7 @@ public class CollectionController {
         return "redirect:/collection";
     }
 
-    @PostMapping("/collection/remove/{id}")
+    @PostMapping("/remove/{id}")
     public String removeFromCollection(@PathVariable Long id, Principal principal) {
         CollectionEntry entry = collectionEntryRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("Entry not found"));
 

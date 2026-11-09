@@ -2,7 +2,6 @@ package fi.haagahelia.musicapp.web;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,8 +20,10 @@ public class WebSecurityConfig {
 
         http
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/songs").permitAll()
+                .requestMatchers("/songs/submit").authenticated()
+                .requestMatchers("/songs/**").hasRole("ADMIN")
                 .requestMatchers(
-                    "/songs",
                     "/login",
                     "/register",
                     "/css/**",

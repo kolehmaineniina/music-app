@@ -8,5 +8,6 @@ public interface CollectionEntryRepository extends CrudRepository <CollectionEnt
         List<CollectionEntry> findByUser(AppUser user);
         List<CollectionEntry> findByUser_Username(String username);
         boolean existsByUserAndSong(AppUser user, Song song);
+        List<CollectionEntry> findBySong(Song song);
 
 }

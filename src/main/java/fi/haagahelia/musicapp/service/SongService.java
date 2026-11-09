@@ -26,6 +26,16 @@ public class SongService {
         this.collectionEntryRepository = collectionEntryRepository;
     }
 
+    @Transactional
+    public Song createSong(Song song) {
+
+        if (song.getId() != null) {
+            throw new IllegalArgumentException("Song already exists");
+        }
+
+        return songRepository.save(song);
+    }
+
     @Transactional 
     public void createSongAndAddToCollection(Song song, String username) {
         AppUser user = appUserRepository.findByUsername(username);
@@ -34,12 +44,38 @@ public class SongService {
             throw new IllegalArgumentException("User " + username + " not found");
         }
 
-       if (song.getId() != null) {
-            throw new IllegalArgumentException("Song already exists");
-       }
-        Song savedSong = songRepository.save(song);
+        Song savedSong = createSong(song);
         collectionEntryRepository.save(new CollectionEntry(user, savedSong));
 
+    }
+
+    @Transactional
+        public void updateSong(Long id, Song updatedSong) {
+
+            Song existingSong = songRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                        "Song not found: " + id
+                    ));
+
+            existingSong.setTitle(updatedSong.getTitle());
+            existingSong.setArtist(updatedSong.getArtist());
+            existingSong.setReleaseYear(updatedSong.getReleaseYear());
+
+            songRepository.save(existingSong);
+        }
+
+    @Transactional
+    public void deleteSong(Long id) {
+
+        Song song = songRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(
+                    "Song not found: " + id
+                ));
+
+        collectionEntryRepository.deleteAll(
+                collectionEntryRepository.findBySong(song)
+        );
+
+        songRepository.delete(song);
     }
 
 }

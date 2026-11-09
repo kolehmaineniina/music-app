@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Song Catalog</title>
@@ -24,7 +25,8 @@
                 <th>Title</th>
                 <th>Artist</th>
                 <th>Year</th>
-                <th>Actions</th>
+                <th>My Collection</th>
+                <th sec:authorize="hasRole('ADMIN')">Administration</th>
             </tr>
         </thead>
         <tbody>
@@ -48,11 +50,29 @@
                         Already in collection
                     </span>
                 </td>
+                    <!-- Administration actions -->
+                <td sec:authorize="hasRole('ADMIN')">
+
+                    <a th:href="@{/songs/edit/{id}(id=${song.id})}">
+                        Edit
+                    </a>
+
+                    <form th:action="@{/songs/delete/{id}(id=${song.id})}"
+                        method="post"
+                        style="display:inline">
+
+                        <button type="submit"
+                                onclick="return confirm('Delete this song from the catalog and all user collections?')">
+                            Delete
+                        </button>
+
+                    </form>
+                </td>               
             </tr>
         </tbody>
     </table>
     <br>
-    <div>
+    <div sec:authorize="hasRole('ADMIN')">
         <a th:if="${loggedIn}" th:href="@{/songs/add}">Add new song</a>
     </div>
 </body>

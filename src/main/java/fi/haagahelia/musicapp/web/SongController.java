@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import fi.haagahelia.musicapp.domain.CollectionEntryRepository;
 import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongRepository;
+import org.springframework.security.core.Authentication;
 import fi.haagahelia.musicapp.service.SongService;
 
 @Controller
@@ -31,42 +32,43 @@ public class SongController {
         this.songService = songService;
     }
 
-@GetMapping("/songs")
-public String showSongs(
-        Principal principal,
-        Model model,
-        @RequestParam(name = "search", required = false) String search
-) {
+    @GetMapping("/songs")
+    public String showSongs(
+            Authentication authentication,
+            Principal principal,
+            Model model,
+            @RequestParam(name = "search", required = false) String search
+    ) {
 
-    // Songs from the shared catalog
-    if (search == null || search.isBlank()) {
-        model.addAttribute("songs", songRepository.findAll());
-    } else {
-        model.addAttribute("songs",
-            songRepository.findByTitleContainingIgnoreCaseOrArtistContainingIgnoreCase(
-                search.trim(), search.trim()));
+        // Songs from the shared catalog
+        if (search == null || search.isBlank()) {
+            model.addAttribute("songs", songRepository.findAll());
+        } else {
+            model.addAttribute("songs",
+                songRepository.findByTitleContainingIgnoreCaseOrArtistContainingIgnoreCase(
+                    search.trim(), search.trim()));
+        }
+
+        model.addAttribute("search", search);
+        
+        boolean loggedIn = principal != null;
+        model.addAttribute("loggedIn", loggedIn);
+
+        // Songs in user's collection
+        if (loggedIn) {
+            Set<Long> collectedSongIds = collectionEntryRepository
+                    .findByUser_Username(principal.getName())
+                    .stream()
+                    .map(entry -> entry.getSong().getId())
+                    .collect(Collectors.toSet());
+
+            model.addAttribute("collectedSongIds", collectedSongIds);
+        } else {
+            model.addAttribute("collectedSongIds", Collections.emptySet());
+        }
+
+        return "songlist";
     }
-
-    model.addAttribute("search", search);
-    
-    boolean loggedIn = principal != null;
-    model.addAttribute("loggedIn", loggedIn);
-
-    // Songs in user's collection
-    if (loggedIn) {
-        Set<Long> collectedSongIds = collectionEntryRepository
-                .findByUser_Username(principal.getName())
-                .stream()
-                .map(entry -> entry.getSong().getId())
-                .collect(Collectors.toSet());
-
-        model.addAttribute("collectedSongIds", collectedSongIds);
-    } else {
-        model.addAttribute("collectedSongIds", Collections.emptySet());
-    }
-
-    return "songlist";
-}
 
     @GetMapping("/songs/add")
     public String addSong(Model model) {
@@ -81,10 +83,24 @@ public String showSongs(
         return "songform";
     }
 
-    @PostMapping("songs/save")
-    public String saveSong(@ModelAttribute Song song, Principal principal) {
-        songService.createSongAndAddToCollection(song, principal.getName());
-        return "redirect:/collection";
+    @PostMapping("/songs/update")
+    public String updateSong(@ModelAttribute Song song) {
+        songService.updateSong(song.getId(), song);
+        return "redirect:/songs";
+    }
+    
+    @PostMapping("/songs/save")
+    public String saveSong(@ModelAttribute Song song) {
+        songService.createSong(song);
+        return "redirect:/songs";
+    }
+
+    @PostMapping("/songs/delete/{id}")
+    public String deleteSong(@PathVariable Long id) {
+
+        songService.deleteSong(id);
+
+        return "redirect:/songs";
     }
 
 }

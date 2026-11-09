@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Song Submissions</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+    <div class="container mt-4">
+
+        <h1>Submitted Songs</h1>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Artist</th>
+                    <th>Year</th>
+                    <th>Submitted by</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="submission : ${submissions}">
+                    <td th:text="${submission.title}"></td>
+                    <td th:text="${submission.artist}"></td>
+                    <td th:text="${submission.releaseYear}"></td>
+                    <td th:text="${submission.submittedBy.username}"></td>
+                    <td><a th:href="@{/admin/submissions/review/{id}(id=${submission.id})}">Review</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p th:if="${#lists.isEmpty(submissions)}">
+            No pending submissions.
+        </p>
+
+        <a th:href="@{/songs}" class="btn btn-secondary">
+            Back to Songs
+        </a>
+
+    </div>
+</body>
+</html>

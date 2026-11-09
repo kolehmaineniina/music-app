@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Suggest a Song</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+    <div class="container mt-4">
+
+        <h1>Song Submission</h1>
+        <p th:text="${reviewMode} ? 'Review Song Submission' : 'Suggest New Song'"></p>
+
+        <form th:object="${submissionForm}"
+              th:action="${reviewMode} ? @{/admin/submissions/approve/{id}(id=${submissionId})} : @{/submissions}"
+              method="post">
+
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" th:field="*{title}"
+                       class="form-control" id="title">
+
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('title')}"
+                     th:errors="*{title}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="artist" class="form-label">Artist</label>
+                <input type="text" th:field="*{artist}"
+                       class="form-control" id="artist">
+
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('artist')}"
+                     th:errors="*{artist}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="releaseYear" class="form-label">Release year</label>
+                <input type="number" th:field="*{releaseYear}"
+                       class="form-control" id="releaseYear">
+
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('releaseYear')}"
+                     th:errors="*{releaseYear}">
+                </div>
+            </div>
+            <div th:if="${reviewMode}">
+                <button type="submit">Approve</button>
+
+                <button type="submit"
+                        formnovalidate
+                        th:formaction="@{/admin/submissions/reject/{id}(id=${submissionId})}">
+                    Reject
+                </button>
+
+                <a th:href="@{/admin/submissions}">Cancel</a>
+            </div>
+
+            <div th:unless="${reviewMode}">
+                <button type="submit">Submit for Review</button>
+                <a th:href="@{/songs}">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>

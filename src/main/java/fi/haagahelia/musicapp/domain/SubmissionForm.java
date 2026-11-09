@@ -6,12 +6,12 @@ import jakarta.validation.constraints.NotBlank;
 
 public class SubmissionForm {
 
-    @NotBlank
+    @NotBlank(message = "Title required")
     private String title;
 
-    @NotBlank
+    @NotBlank(message = "Artist required")
     private String artist;
-
+    
     @Min(1500)
     @Max(2100)
     private int releaseYear;

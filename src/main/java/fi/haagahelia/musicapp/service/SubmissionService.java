@@ -8,6 +8,7 @@ import fi.haagahelia.musicapp.domain.AppUserRepository;
 import fi.haagahelia.musicapp.domain.SongSubmission;
 import fi.haagahelia.musicapp.domain.SongSubmissionRepository;
 import fi.haagahelia.musicapp.domain.SubmissionForm;
+import fi.haagahelia.musicapp.domain.SubmissionStatus;
 
 @Service 
 public class SubmissionService {
@@ -39,4 +40,16 @@ public class SubmissionService {
         songSubmissionRepository.save(submission);
     }
 
+    @Transactional
+    public void rejectSubmission(Long id) {
+
+        SongSubmission submission = songSubmissionRepository.findById(id).orElseThrow(() ->
+            new IllegalArgumentException("Submission not found: " + id));
+
+        if (submission.getStatus() != SubmissionStatus.PENDING) {
+            throw new IllegalStateException("Only pending submissions can be rejected");
+        }
+
+        submission.setStatus(SubmissionStatus.REJECTED);
+    }
 }

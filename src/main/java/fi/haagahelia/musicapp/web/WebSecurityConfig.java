@@ -23,6 +23,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/songs").permitAll()
                 .requestMatchers("/songs/submit").authenticated()
                 .requestMatchers("/songs/**").hasRole("ADMIN")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers(
                     "/login",
                     "/register",
@@ -41,7 +42,7 @@ public class WebSecurityConfig {
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/collection", false) //!! -> config to route songs -> href:login -> songs
+                .defaultSuccessUrl("/collection", true) //!! -> config to route songs -> href:login -> songs
                 .permitAll()
             )
             .logout(logout -> logout

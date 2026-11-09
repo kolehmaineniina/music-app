@@ -73,7 +73,15 @@
     </table>
     <br>
     <div sec:authorize="hasRole('ADMIN')">
-        <a th:if="${loggedIn}" th:href="@{/songs/add}">Add new song</a>
+        <a  th:href="@{/songs/add}" class="btn btn-primary">
+            Add Song
+        </a>
+        <a th:href="@{/admin/submissions}" class="btn btn-outline-secondary">
+            Review Submissions
+        </a>
     </div>
+    <a sec:authorize="isAuthenticated() and hasRole('ADMIN')" th:href="@{/submissions/new}" class="btn btn-outline-primary">
+        Suggest a Song
+    </a>
 </body>
 </html>

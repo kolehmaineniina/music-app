@@ -45,19 +45,21 @@ public class SongService {
     }
 
     @Transactional
-        public void updateSong(Long id, Song updatedSong) {
+    public void updateSong(Long id, Song updatedSong) {
 
-            Song existingSong = songRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                        "Song not found: " + id
-                    ));
+        Song existingSong = songRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                    "Song not found: " + id
+                ));
 
-            existingSong.setTitle(updatedSong.getTitle());
-            existingSong.setArtist(updatedSong.getArtist());
-            existingSong.setReleaseYear(updatedSong.getReleaseYear());
+        existingSong.setTitle(updatedSong.getTitle());
+        existingSong.setArtist(updatedSong.getArtist());
+        existingSong.setReleaseYear(updatedSong.getReleaseYear());
 
-            songRepository.save(existingSong);
-        }
+        // songRepository.save(existingSong) unnecessary: 
+        // @Transactional keeps existingSong managed by Hibernate;
+        // dirty checking keeps track of changes and flushes them at commit.
+    }
 
     @Transactional
     public void deleteSong(Long id) {

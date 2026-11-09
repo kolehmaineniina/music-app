@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import fi.haagahelia.musicapp.domain.CollectionEntryRepository;
 import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongRepository;
-import org.springframework.security.core.Authentication;
 import fi.haagahelia.musicapp.service.SongService;
 
 @Controller
@@ -36,7 +35,6 @@ public class SongController {
 
     @GetMapping
     public String showSongs(
-            Authentication authentication,
             Principal principal,
             Model model,
             @RequestParam(name = "search", required = false) String search

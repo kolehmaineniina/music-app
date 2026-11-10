@@ -8,6 +8,7 @@ import fi.haagahelia.musicapp.domain.AppUser;
 import fi.haagahelia.musicapp.domain.AppUserRepository;
 import fi.haagahelia.musicapp.domain.SignUpForm;
 
+//TO DO: Password reset
 // Checks registration details and saves new accounts.
 @Service 
 public class RegistrationService {

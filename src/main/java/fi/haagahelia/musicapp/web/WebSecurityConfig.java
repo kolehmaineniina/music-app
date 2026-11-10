@@ -24,8 +24,7 @@ public class WebSecurityConfig {
                     "/songs",
                     "/login",
                     "/register",
-                    "/css/**",
-                    "/h2-console/**"
+                    "/css/**"
                 ).permitAll()
                 .requestMatchers("/songs/**").hasRole("ADMIN")
                 .requestMatchers("/admin/**").hasRole("ADMIN")

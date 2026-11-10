@@ -46,8 +46,8 @@ public class WebSecurityConfig {
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                // Use the catalog after sign-in unless a saved request takes priority.
-                .defaultSuccessUrl("/songs")
+                // Use the catalog after sign-in. Must be true in the current implementation since there is nothing at root endpoint ("/").
+                .defaultSuccessUrl("/songs", true)
                 .permitAll()
             )
             // Allow access to the logout route.

@@ -52,7 +52,7 @@ public class SubmissionController {
 
         submissionService.createSubmission(submissionForm, principal.getName());
         
-        return "redirect:/songs";
+        return "redirect:/songs?submitted";
     }
     
     // Show submissions that are still waiting for review.

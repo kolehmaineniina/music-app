@@ -54,7 +54,7 @@ public class AuthController {
             return "signup";
         }
 
-        return "redirect:/login";
+        return "redirect:/login?registered";
     }
 
 }

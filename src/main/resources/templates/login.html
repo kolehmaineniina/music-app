@@ -26,6 +26,10 @@
                     You have been logged out.
                 </div>
 
+                <div th:if="${param.registered}" class="alert alert-success">
+                    Account created. You can now log in.
+                </div>
+
                 <form th:action="@{/login}" method="post">
 
                     <div class="mb-3">

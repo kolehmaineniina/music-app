@@ -83,7 +83,7 @@ public class SubmissionController {
     @PostMapping("/admin/submissions/reject/{id}")
     public String rejectSubmission(@PathVariable Long id) {
         submissionService.rejectSubmission(id);
-        return "redirect:/admin/submissions";
+        return "redirect:/admin/submissions?rejected";
     }  
     
     @PostMapping("/admin/submissions/approve/{id}")
@@ -102,6 +102,6 @@ public class SubmissionController {
 
         submissionService.approveSubmission(id, form);
 
-        return "redirect:/admin/submissions";
+        return "redirect:/admin/submissions?approved";
     }
 }

@@ -1,45 +1,82 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <title>Song Submissions</title>
+    <title>MusicApp - Pending Submissions</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
-<body>
-    <div class="container mt-4">
 
-        <h1>Submitted Songs</h1>
+<body class="bg-light">
 
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Artist</th>
-                    <th>Year</th>
-                    <th>Submitted by</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
+    <div class="container mt-5">
 
-            <tbody>
-                <tr th:each="submission : ${submissions}">
-                    <td th:text="${submission.title}"></td>
-                    <td th:text="${submission.artist}"></td>
-                    <td th:text="${submission.releaseYear}"></td>
-                    <td th:text="${submission.submittedBy.username}"></td>
-                    <td><a th:href="@{/admin/submissions/review/{id}(id=${submission.id})}">Review</a></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1>MusicApp</h1>
+                <h2 class="h4 text-muted">Pending Song Submissions</h2>
+            </div>
 
-        <p th:if="${#lists.isEmpty(submissions)}">
-            No pending submissions.
-        </p>
+            <a th:href="@{/songs}" class="btn btn-outline-secondary">
+                Back to Catalog
+            </a>
+        </div>
 
-        <a th:href="@{/songs}" class="btn btn-secondary">
-            Back to Songs
-        </a>
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <div th:if="${param.approved}" class="alert alert-success">
+                    Song submission approved successfully and added to the catalog.
+                </div>
+
+                <div th:if="${param.rejected}" class="alert alert-warning">
+                    Song submission rejected.
+                </div>
+
+                <div th:if="${#lists.isEmpty(submissions)}"
+                     class="alert alert-info mb-0">
+                    No pending submissions.
+                </div>
+
+                <div th:unless="${#lists.isEmpty(submissions)}"
+                     class="table-responsive">
+
+                    <table class="table table-striped table-hover align-middle">
+
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Title</th>
+                                <th>Artist</th>
+                                <th>Year</th>
+                                <th>Submitted by</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr th:each="submission : ${submissions}">
+                                <td th:text="${submission.title}"></td>
+                                <td th:text="${submission.artist}"></td>
+                                <td th:text="${submission.releaseYear}"></td>
+                                <td th:text="${submission.submittedBy.username}"></td>
+
+                                <td>
+                                    <a class="btn btn-primary btn-sm"
+                                       th:href="@{/admin/submissions/review/{id}(id=${submission.id})}">
+                                        Review
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
 
     </div>
+
 </body>
 </html>

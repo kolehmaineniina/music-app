@@ -1,35 +1,75 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <title>Song Form</title>
+    <title>MusicApp - Song Form</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
-<body>
-    <h1 th:text="${song.id == null} ? 'Add New Song' : 'Edit Song'"></h1>
-    <form th:object="${song}"
-      th:action="${song.id == null} ? @{/songs/save} : @{/songs/update}"
-      method="post">
-            <input type="hidden" th:field="*{id}">
-        <div>
-            <label for="title">Title:</label>
-            <input type="text" th:field="*{title}" id="title" required>
+
+<body class="bg-light">
+
+    <div class="container mt-5" style="max-width: 500px;">
+
+        <h1 class="text-center mb-4">MusicApp</h1>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <h2 class="h4 mb-4"
+                    th:text="${song.id == null} ? 'Add New Song' : 'Edit Song'">
+                </h2>
+
+                <form th:object="${song}"
+                      th:action="${song.id == null} ? @{/songs/save} : @{/songs/update}"
+                      method="post">
+
+                    <input type="hidden" th:field="*{id}">
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text"
+                               th:field="*{title}"
+                               id="title"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="artist" class="form-label">Artist</label>
+                        <input type="text"
+                               th:field="*{artist}"
+                               id="artist"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="releaseYear" class="form-label">
+                            Release year
+                        </label>
+                        <input type="number"
+                               th:field="*{releaseYear}"
+                               id="releaseYear"
+                               class="form-control">
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            Save Song
+                        </button>
+
+                        <a th:href="@{/songs}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
         </div>
 
-        <div>
-            <label for="artist">Artist:</label>
-            <input type="text" th:field="*{artist}" id="artist" required>
-        </div>
+    </div>
 
-        <div>
-            <label for="releaseYear">Release year:</label>
-            <input type="number" th:field="*{releaseYear}" id="releaseYear">
-        </div>
-
-        <br>
-
-        <button type="submit">Save Song</button>
-        <a th:href="@{/songs}">Cancel</a>
-
-    </form>
 </body>
 </html>

@@ -20,23 +20,24 @@ public class WebSecurityConfig {
 
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/songs/**").hasRole("ADMIN")
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/submissions/**").authenticated()
                 .requestMatchers(
                     "/songs",
                     "/login",
                     "/register",
-                    "/css/**"
+                    "/css/**",
+                    "/h2-console/**"
                 ).permitAll()
+                .requestMatchers("/songs/**").hasRole("ADMIN")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/submissions/**").authenticated()
                 .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf
             .ignoringRequestMatchers("/h2-console/**")
-        )
-        .headers(headers -> headers
-            .frameOptions(frameOptions -> frameOptions.sameOrigin())
-        )
+            )
+            .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.sameOrigin())
+            )
             .formLogin(form -> form
                 .loginPage("/login")
                 .defaultSuccessUrl("/songs")

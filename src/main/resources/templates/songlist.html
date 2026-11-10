@@ -1,87 +1,208 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
-    <title>Song Catalog</title>
+    <title>MusicApp - Song Catalog</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
-<body>
 
-    <h1>Song Catalog</h1>
+<body class="bg-light">
 
-    <form th:action="@{/songs}" method="get">
-        <input type="text"
-            name="search"
-            th:value="${search}"
-            placeholder="Search by title or artist">
+    <div class="container mt-5">
 
-        <button type="submit">Search</button>
-        <a th:href="@{/songs}">Clear</a>
-    </form>
-    <br>
-    <table border="1" cellpadding="2">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Artist</th>
-                <th>Year</th>
-                <th>My Collection</th>
-                <th sec:authorize="hasRole('ADMIN')">Administration</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="song : ${songs}">
-                <td th:text="${song.title}"></td>
-                <td th:text="${song.artist}"></td>
-                <td th:text="${song.releaseYear}"></td>
-                <td>
-                    <!-- Anonymous visitor -->
-                    <a th:if="${!loggedIn}" th:href="@{/login}">
-                        Log in to add
+        <!-- Header and navigation -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+                <h1>MusicApp</h1>
+                <h2 class="h4 text-muted">Song Catalog</h2>
+            </div>
+
+            <!-- Main navigation -->
+            <div class="d-flex gap-2 align-items-center">
+
+                <div sec:authorize="isAnonymous()" class="d-flex gap-2">
+                    <a th:href="@{/login}" class="btn btn-outline-primary">
+                        Login
                     </a>
-                    <!-- Logged in, song not in collection -->
-                    <form th:if="${loggedIn and !collectedSongIds.contains(song.id)}"
-                        th:action="@{/collection/add/{id}(id=${song.id})}"
-                        method="post">
-                        <button type="submit">Add to collection</button>
+                    <a th:href="@{/register}" class="btn btn-primary">
+                        Sign up
+                    </a>
+                </div>
+
+                <div sec:authorize="isAuthenticated()" class="d-flex gap-2">
+
+                    <a th:href="@{/collection}" class="btn btn-outline-primary">
+                        My Collection
+                    </a>
+
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-outline-danger">
+                            Logout
+                        </button>
                     </form>
-                    <!-- Logged in, song already in collection -->
-                    <span th:if="${loggedIn and collectedSongIds.contains(song.id)}">
-                        Already in collection
-                    </span>
-                </td>
-                    <!-- Administration actions -->
-                <td sec:authorize="hasRole('ADMIN')">
 
-                    <a th:href="@{/songs/edit/{id}(id=${song.id})}">
-                        Edit
-                    </a>
+                </div>
 
-                    <form th:action="@{/songs/delete/{id}(id=${song.id})}"
-                        method="post"
-                        style="display:inline">
+            </div>
 
-                        <button type="submit"
-                                onclick="return confirm('Delete this song from the catalog and all user collections?')">
-                            Delete
+        </div>
+
+        <!-- Page actions -->
+        <div class="d-flex justify-content-end gap-2 mb-3">
+
+            <a sec:authorize="hasRole('USER')"
+            th:href="@{/submissions/new}"
+            class="btn btn-outline-primary">
+                Suggest a Song
+            </a>
+
+            <div sec:authorize="hasRole('ADMIN')" class="d-flex gap-2">
+
+                <a th:href="@{/songs/add}" class="btn btn-primary">
+                    Add Song
+                </a>
+
+                <a th:href="@{/admin/submissions}" class="btn btn-outline-secondary">
+                    Review Submissions
+                </a>
+
+            </div>
+
+        </div>
+        <!-- Submission confirmation -->
+        <div th:if="${param.submitted}" class="alert alert-success">
+            Your song suggestion has been submitted for review.
+        </div>
+
+        <!-- Catalog card -->
+        <div class="card shadow-sm mb-5">
+            <div class="card-body p-4">
+
+                <!-- Search -->
+                <form th:action="@{/songs}" method="get" class="mb-4">
+
+                    <div class="d-flex gap-2">
+
+                        <input type="text"
+                               name="search"
+                               th:value="${search}"
+                               class="form-control"
+                               placeholder="Search by title or artist">
+
+                        <button type="submit" class="btn btn-primary">
+                            Search
                         </button>
 
-                    </form>
-                </td>               
-            </tr>
-        </tbody>
-    </table>
-    <br>
-    <div sec:authorize="hasRole('ADMIN')">
-        <a  th:href="@{/songs/add}" class="btn btn-primary">
-            Add Song
-        </a>
-        <a th:href="@{/admin/submissions}" class="btn btn-outline-secondary">
-            Review Submissions
-        </a>
+                        <a th:href="@{/songs}" class="btn btn-outline-secondary">
+                            Clear
+                        </a>
+
+                    </div>
+
+                </form>
+
+                <!-- Empty catalog -->
+                <div th:if="${#lists.isEmpty(songs)}"
+                     class="alert alert-info">
+                    No songs found.
+                </div>
+
+                <!-- Catalog table -->
+                <div th:unless="${#lists.isEmpty(songs)}"
+                     class="table-responsive">
+
+                    <table class="table table-striped table-hover align-middle">
+
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Title</th>
+                                <th>Artist</th>
+                                <th>Year</th>
+                                <th>My Collection</th>
+                                <th sec:authorize="hasRole('ADMIN')">
+                                    Administration
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr th:each="song : ${songs}">
+
+                                <td th:text="${song.title}"></td>
+                                <td th:text="${song.artist}"></td>
+                                <td th:text="${song.releaseYear}"></td>
+
+                                <!-- Collection actions -->
+                                <td>
+
+                                    <!-- Guest -->
+                                    <a th:if="${!loggedIn}"
+                                       th:href="@{/login}"
+                                       class="btn btn-outline-primary btn-sm">
+                                        Log in to add
+                                    </a>
+
+                                    <!-- Authenticated: not collected -->
+                                    <form th:if="${loggedIn and !collectedSongIds.contains(song.id)}"
+                                          th:action="@{/collection/add/{id}(id=${song.id})}"
+                                          method="post">
+
+                                        <button type="submit"
+                                                class="btn btn-outline-success btn-sm">
+                                            Add to Collection
+                                        </button>
+
+                                    </form>
+
+                                    <!-- Authenticated: already collected -->
+                                    <span th:if="${loggedIn and collectedSongIds.contains(song.id)}"
+                                          class="badge bg-success">
+                                        In Collection
+                                    </span>
+
+                                </td>
+
+                                <!-- Administrator actions -->
+                                <td sec:authorize="hasRole('ADMIN')">
+
+                                    <div class="d-flex gap-2">
+
+                                        <a th:href="@{/songs/edit/{id}(id=${song.id})}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            Edit
+                                        </a>
+
+                                        <form th:action="@{/songs/delete/{id}(id=${song.id})}"
+                                              method="post">
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-danger btn-sm"
+                                                    onclick="return confirm('Delete this song from the catalog and all user collections?')">
+                                                Delete
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
     </div>
-    <a sec:authorize="isAuthenticated() and !hasRole('ADMIN')" th:href="@{/submissions/new}" class="btn btn-outline-primary">
-        Suggest a Song
-    </a>
+
 </body>
 </html>

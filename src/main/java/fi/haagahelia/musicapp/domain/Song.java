@@ -5,9 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+// Stores a song in the catalog.
 @Entity
 public class Song {
 
+    // The database generates an ID for each song.
     @Id 
     @GeneratedValue (strategy = GenerationType.AUTO)
     private Long id;
@@ -17,6 +19,7 @@ public class Song {
 
     private int releaseYear;
 
+    // Required so the database tools can create song objects.
     public Song() {
 
     }

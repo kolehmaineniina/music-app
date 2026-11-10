@@ -1,5 +1,6 @@
 package fi.haagahelia.musicapp.service;
 
+// Reports a registration problem and the form field it belongs to.
 public class RegistrationException extends RuntimeException {
 
     private final String field;

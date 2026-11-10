@@ -11,8 +11,9 @@ import fi.haagahelia.musicapp.domain.SongSubmissionRepository;
 import fi.haagahelia.musicapp.domain.SubmissionForm;
 import fi.haagahelia.musicapp.domain.SubmissionStatus;
 
-// Concurrent transactions: @Version?
+// TO DO: Concurrent transaction control wiht @Version?
 
+// Handles song submissions and review decisions.
 @Service 
 public class SubmissionService {
     private final SongSubmissionRepository songSubmissionRepository;
@@ -29,6 +30,7 @@ public class SubmissionService {
         }
 
     @Transactional 
+    // Link the submitted song details to the account that sent them.
     public void createSubmission(SubmissionForm submissionForm, String username) {
         AppUser user = appUserRepository.findByUsername(username);
 
@@ -47,6 +49,7 @@ public class SubmissionService {
     }
 
     @Transactional
+    // Only a submission still waiting for review can be rejected.
     public void rejectSubmission(Long id) {
 
         SongSubmission submission = songSubmissionRepository.findById(id).orElseThrow(() ->
@@ -56,10 +59,12 @@ public class SubmissionService {
             throw new IllegalStateException("Only pending submissions can be rejected");
         }
 
+        // The status change is saved when the transaction completes.
         submission.setStatus(SubmissionStatus.REJECTED);
     }
 
     @Transactional
+    // Save the review changes, song and collection entry together, or undo them on failure.
     public void approveSubmission(Long id, SubmissionForm form) {
 
         SongSubmission submission = songSubmissionRepository.findById(id).orElseThrow(() ->
@@ -79,11 +84,13 @@ public class SubmissionService {
         song.setArtist(submission.getArtist());
         song.setReleaseYear(submission.getReleaseYear());
 
+        // Add the approved song to the catalog and the sender collection.
         songService.createSongAndAddToCollection(
                 song,
                 submission.getSubmittedBy()
         );
 
+        // Mark the submission approved after creating the song and collection entry.
         submission.setStatus(SubmissionStatus.APPROVED);
     }
 }

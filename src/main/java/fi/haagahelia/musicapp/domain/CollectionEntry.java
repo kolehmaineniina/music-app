@@ -9,7 +9,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
+// Connects a user to a song in their collection.
 @Entity 
+// Each user can have a song in their collection only once.
 @Table (
     name = "collection_entry",
     uniqueConstraints = @UniqueConstraint(

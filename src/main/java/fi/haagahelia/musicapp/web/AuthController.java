@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 
+// Shows the sign-in and registration pages and handles registration forms.
 @Controller 
 public class AuthController {
 
@@ -27,6 +28,7 @@ public class AuthController {
         return "login";
     }
 
+    // Give the registration page an empty form to fill in.
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("signupform", new SignUpForm());
@@ -38,6 +40,7 @@ public class AuthController {
             @Valid @ModelAttribute("signupform") SignUpForm signUpForm,
             BindingResult bindingResult) {
 
+        // Show the form again if any field fails its validation rules.
         if (bindingResult.hasErrors()) {
             return "signup";
         }
@@ -45,6 +48,7 @@ public class AuthController {
         try {
             registrationService.register(signUpForm);
         } catch (RegistrationException exception) {
+            // Show the registration problem beside the field it belongs to.
             bindingResult.rejectValue(
                 exception.getField(),
                 "registration.error",
@@ -54,6 +58,7 @@ public class AuthController {
             return "signup";
         }
 
+        // Send the browser to sign-in after successful registration.
         return "redirect:/login?registered";
     }
 

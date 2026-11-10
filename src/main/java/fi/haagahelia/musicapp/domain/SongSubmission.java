@@ -2,6 +2,7 @@ package fi.haagahelia.musicapp.domain;
 
 import jakarta.persistence.*;
 
+// Stores a song submitted for review.
 @Entity
 public class SongSubmission {
 
@@ -18,6 +19,7 @@ public class SongSubmission {
     @JoinColumn(name = "submitted_by")
     private AppUser submittedBy;
 
+    // Store the status name, such as PENDING, in the database.
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private SubmissionStatus status;
@@ -30,6 +32,7 @@ public class SongSubmission {
         this.artist = artist;
         this.releaseYear = releaseYear;
         this.submittedBy = submittedBy;
+        // New submissions start waiting for review.
         this.status = SubmissionStatus.PENDING;
     }
 

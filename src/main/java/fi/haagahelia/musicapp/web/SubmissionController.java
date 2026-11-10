@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 // TO DO: Concurrency control: enable locking with JPA @Version?
 
+// Handles submission forms and the admin review pages.
 @Controller 
 public class SubmissionController {
     private final SubmissionService submissionService;
@@ -30,6 +31,7 @@ public class SubmissionController {
         this.submissionRepository = submissionRepository;
     }
 
+    // Open an empty form for a new song submission.
     @GetMapping("/submissions/new")
     public String showSubmissionForm(Model model) {
         model.addAttribute("submissionForm", new SubmissionForm());
@@ -37,6 +39,7 @@ public class SubmissionController {
     }
 
     @PostMapping("/submissions")
+    // Check the form fields before saving a submission for the signed-in user.
     public String createSubmission(
         @Valid @ModelAttribute("submissionForm") SubmissionForm submissionForm,
         BindingResult bindingResult,
@@ -52,6 +55,7 @@ public class SubmissionController {
         return "redirect:/songs";
     }
     
+    // Show submissions that are still waiting for review.
     @GetMapping("/admin/submissions")
     public String showSubmissions(Model model) {
         model.addAttribute("submissions", submissionRepository.findByStatus(SubmissionStatus.PENDING));
@@ -68,6 +72,7 @@ public class SubmissionController {
             throw new IllegalStateException("Only pending submissions can be reviewed");
         }
 
+        // Copy the submitted details into a form the admin can correct.
         SubmissionForm form = new SubmissionForm();
         form.setTitle(submission.getTitle());
         form.setArtist(submission.getArtist());
@@ -75,11 +80,13 @@ public class SubmissionController {
 
         model.addAttribute("submissionForm", form);
         model.addAttribute("submissionId", id);
+        // Use the submission form as an admin review form.
         model.addAttribute("reviewMode", true);
 
         return "submissionform";
     }
 
+    // Pass the rejection to the service, then return to the review list.
     @PostMapping("/admin/submissions/reject/{id}")
     public String rejectSubmission(@PathVariable Long id) {
         submissionService.rejectSubmission(id);
@@ -94,12 +101,14 @@ public class SubmissionController {
             Model model) {
 
         if (bindingResult.hasErrors()) {
+            // Keep the review details when showing errors in the corrected form.
             model.addAttribute("submissionId", id);
             model.addAttribute("reviewMode", true);
 
             return "submissionform";
         }
 
+        // Approve using the checked form details, including admin corrections.
         submissionService.approveSubmission(id, form);
 
         return "redirect:/admin/submissions?approved";

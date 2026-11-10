@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import fi.haagahelia.musicapp.domain.AppUser;
 import fi.haagahelia.musicapp.domain.AppUserRepository;
 
+// Loads account details for Spring Security during sign-in.
 @Service 
 public class CustomUserDetailsService implements UserDetailsService {
     private final AppUserRepository appUserRepository;
@@ -22,10 +23,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         throws UsernameNotFoundException {
             AppUser appUser = appUserRepository.findByUsername(username);
 
+            // Stop sign-in if the username does not belong to an account.
             if (appUser == null) {
                 throw new UsernameNotFoundException("User " + username + "not found");
             }
 
+            // Pass the stored password hash and role to Spring Security.
             UserDetails user = User.withUsername(appUser.getUsername())
                                 .password(appUser.getPasswordHash())
                                 .roles(appUser.getRole())

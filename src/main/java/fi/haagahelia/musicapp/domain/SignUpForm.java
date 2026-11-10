@@ -2,8 +2,10 @@ package fi.haagahelia.musicapp.domain;
 
 import jakarta.validation.constraints.*;
 
+// DTO for details entered when creating an account.
 public class SignUpForm {
 
+    // Check the username length and allowed characters.
     @NotBlank(message = "Username required")
     @Size(
         min = 5, max = 30,
@@ -17,12 +19,14 @@ public class SignUpForm {
     @Email(message = "Please enter a valid email address")
     private String email;
 
+    // Require a password between 8 and 72 characters.
     @NotBlank(message = "Password required")
     @Size(min = 8, max = 72,
         message = "Password must be between 8 and 72 characters")
     private String password;
 
     @NotBlank
+    // Holds repeated password so it can be compared with the first.
     private String passwordConfirmed;
 
     public SignUpForm() {

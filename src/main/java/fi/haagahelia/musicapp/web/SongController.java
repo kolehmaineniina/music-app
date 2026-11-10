@@ -19,7 +19,8 @@ import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongRepository;
 import fi.haagahelia.musicapp.service.SongService;
 
-// Consider implementing SongForm DTO (compare SubmissionService)
+// TO DO: implement SongForm DTO 
+// Shows the shared catalog and handles song forms.
 @Controller
 @RequestMapping("/songs")
 public class SongController {
@@ -42,6 +43,7 @@ public class SongController {
     ) {
 
         // Songs from the shared catalog
+        // Show all songs when no search text is given.
         if (search == null || search.isBlank()) {
             model.addAttribute("songs", songRepository.findAll());
         } else {
@@ -57,6 +59,7 @@ public class SongController {
 
         // Songs in user's collection
         if (loggedIn) {
+            // Give the page song IDs so it can mark songs already collected.
             Set<Long> collectedSongIds = collectionEntryRepository
                     .findByUser_Username(principal.getName())
                     .stream()
@@ -71,12 +74,14 @@ public class SongController {
         return "songlist";
     }
 
+    // Open the song form with an empty song.
     @GetMapping("/add")
     public String addSong(Model model) {
         model.addAttribute("song", new Song());
         return "songform";
     }
 
+    // Use the same form with the existing song details.
     @GetMapping("/edit/{id}")
     public String editSong(@PathVariable Long id, Model model) {
         Song song = songRepository.findById(id).orElseThrow();
@@ -84,18 +89,21 @@ public class SongController {
         return "songform";
     }
 
+    // Pass the submitted changes to the service, then return to the catalog.
     @PostMapping("/update")
     public String updateSong(@ModelAttribute Song song) {
         songService.updateSong(song.getId(), song);
         return "redirect:/songs";
     }
     
+    // Create a new catalog song from the submitted form.
     @PostMapping("/save")
     public String saveSong(@ModelAttribute Song song) {
         songService.createSong(song);
         return "redirect:/songs";
     }
 
+    // Let the service remove the song and its collection entries.
     @PostMapping("/delete/{id}")
     public String deleteSong(@PathVariable Long id) {
 

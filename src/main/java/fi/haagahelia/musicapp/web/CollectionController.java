@@ -18,6 +18,7 @@ import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongRepository;
 
 // Consider ControllerService and move business logic there  
+// Shows and changes the signed-in user collection.
 @Controller
 @RequestMapping("/collection")
 public class CollectionController {
@@ -35,6 +36,7 @@ public class CollectionController {
 
     @GetMapping
     public String showCollection(Model model, Principal principal) {
+        // Use the signed-in account to load its collection.
         String username = principal.getName();
         
         model.addAttribute(
@@ -50,6 +52,7 @@ public class CollectionController {
         AppUser user = appUserRepository.findByUsername(principal.getName());
         Song song = songRepository.findById(id).orElseThrow();
         
+        // Add the song only if it is not already in this collection.
         if (!collectionEntryRepository.existsByUserAndSong(user, song)) {
             collectionEntryRepository.save(new CollectionEntry(user, song));
         }  
@@ -57,11 +60,13 @@ public class CollectionController {
         return "redirect:/collection";
     }
 
+    // Here the ID belongs to the collection entry, rather than the song.
     @PostMapping("/remove/{id}")
     public String removeFromCollection(@PathVariable Long id, Principal principal) {
         CollectionEntry entry = collectionEntryRepository.findById(id).orElseThrow(()
             -> new IllegalArgumentException("Entry not found"));
 
+        // Only the owner can remove this collection entry.
         if (!entry.getUser().getUsername().equals(principal.getName())) {
             throw new AccessDeniedException("Cannot remove entry from another user's collection");
         }

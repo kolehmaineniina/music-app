@@ -7,10 +7,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+// Define password hashing, page access and sign-in settings.
 @Configuration 
 public class WebSecurityConfig {
 
     @Bean 
+    // Use BCrypt to hash passwords and check them during sign-in.
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -21,27 +23,34 @@ public class WebSecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
+                    // These pages and CSS files can be opened without signing in.
                     "/songs",
                     "/login",
                     "/register",
                     "/css/**"
                 ).permitAll()
+                // Other song routes and admin pages require the ADMIN role.
                 .requestMatchers("/songs/**").hasRole("ADMIN")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                // Submissions and all remaining routes require sign-in.
                 .requestMatchers("/submissions/**").authenticated()
                 .anyRequest().authenticated()
             )
+            // Skip the form security token check for H2 console requests only.
             .csrf(csrf -> csrf
             .ignoringRequestMatchers("/h2-console/**")
             )
             .headers(headers -> headers
+                // Allow pages from this same site to appear inside frames.
                 .frameOptions(frameOptions -> frameOptions.sameOrigin())
             )
             .formLogin(form -> form
                 .loginPage("/login")
+                // Use the catalog after sign-in unless a saved request takes priority.
                 .defaultSuccessUrl("/songs")
                 .permitAll()
             )
+            // Allow access to the logout route.
             .logout(logout -> logout
                 .permitAll()
             );

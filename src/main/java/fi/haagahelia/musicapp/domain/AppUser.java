@@ -9,7 +9,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
+// Stores a user account and its access role.
 @Entity
+// Only USER and ADMIN roles are allowed in the database.
 @Table(name="users",
     check = @CheckConstraint(constraint = "role IN ('USER', 'ADMIN')")
 )
@@ -23,6 +25,7 @@ public class AppUser {
     @Column(name = "username", nullable = false, unique = true, length = 30)
     private String username;
     
+    // Stores the password hash rather than the original password.
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 

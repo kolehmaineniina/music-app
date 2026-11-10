@@ -9,6 +9,7 @@ import fi.haagahelia.musicapp.domain.CollectionEntryRepository;
 import fi.haagahelia.musicapp.domain.Song;
 import fi.haagahelia.musicapp.domain.SongRepository;
 
+// Handles changes to catalog songs and their collection entries.
 @Service 
 public class SongService {
     private final SongRepository songRepository;
@@ -25,6 +26,7 @@ public class SongService {
     @Transactional
     public Song createSong(Song song) {
 
+        // Only songs without an existing ID can be created here.
         if (song.getId() != null) {
             throw new IllegalArgumentException("Song already exists");
         }
@@ -33,6 +35,7 @@ public class SongService {
     }
 
     @Transactional 
+    // Save the song and collection entry together; undo both if either step fails.
     public void createSongAndAddToCollection(Song song, AppUser user) {
         
         if (user == null) {
@@ -52,6 +55,7 @@ public class SongService {
                     "Song not found: " + id
                 ));
 
+        // Changes to this loaded song are saved when the transaction completes.
         existingSong.setTitle(updatedSong.getTitle());
         existingSong.setArtist(updatedSong.getArtist());
         existingSong.setReleaseYear(updatedSong.getReleaseYear());
@@ -68,6 +72,7 @@ public class SongService {
                     "Song not found: " + id
                 ));
 
+        // Remove collection entries before deleting the song they refer to.
         collectionEntryRepository.deleteAll(
                 collectionEntryRepository.findBySong(song)
         );

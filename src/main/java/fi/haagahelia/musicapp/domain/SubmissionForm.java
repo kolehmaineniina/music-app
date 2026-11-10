@@ -4,14 +4,17 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
+// Holds the song details entered in the submission form.
 public class SubmissionForm {
 
+    // Title and artist must contain text.
     @NotBlank(message = "Title required")
     private String title;
 
     @NotBlank(message = "Artist required")
     private String artist;
     
+    // Accept release years from 1500 to 2100.
     @Min(1500)
     @Max(2100)
     private int releaseYear;

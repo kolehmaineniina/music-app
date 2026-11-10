@@ -8,6 +8,7 @@ import fi.haagahelia.musicapp.domain.AppUser;
 import fi.haagahelia.musicapp.domain.AppUserRepository;
 import fi.haagahelia.musicapp.domain.SignUpForm;
 
+// Checks registration details and saves new accounts.
 @Service 
 public class RegistrationService {
     private final AppUserRepository userRepository;
@@ -29,6 +30,7 @@ public class RegistrationService {
         return userRepository.findByEmail(email) != null;
     }
 
+    // Check for duplicate accounts and matching passwords before saving.
     public void register(SignUpForm form) {
 
 
@@ -57,7 +59,9 @@ public class RegistrationService {
 
         user.setUsername(form.getUsername());
         user.setEmail(form.getEmail());
+        // Store a password hash rather than the original password.
         user.setPasswordHash(passwordEncoder.encode(form.getPassword()));
+        // New accounts receive the regular user role.
         user.setRole("USER");
 
         userRepository.save(user);

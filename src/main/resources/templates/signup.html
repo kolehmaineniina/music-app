@@ -3,51 +3,84 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Register - MusicApp</title>
+    <title>MusicApp - Register</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 
-<body>
+<body class="bg-light">
 
-    <h1>Create an account</h1>
+    <div class="container mt-5" style="max-width: 450px;">
 
-    <form th:object="${signupform}"
-          th:action="@{/register}"
-          method="post"
-          >
+        <h1 class="text-center mb-4">MusicApp</h1>
 
-        <div>
-            <label>Username</label>
-            <input type="text" th:field="*{username}" required>
-            <p th:if="${#fields.hasErrors('username')}"
-               th:errors="*{username}"></p>
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <h2 class="h4 mb-4">Create an account</h2>
+
+                <form th:object="${signupform}"
+                      th:action="@{/register}"
+                      method="post">
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" th:field="*{username}"
+                               class="form-control" required>
+                        <div class="text-danger"
+                             th:if="${#fields.hasErrors('username')}"
+                             th:errors="*{username}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" th:field="*{email}"
+                               class="form-control" required>
+                        <div class="text-danger"
+                             th:if="${#fields.hasErrors('email')}"
+                             th:errors="*{email}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" th:field="*{password}"
+                               class="form-control" required>
+                        <div class="text-danger"
+                             th:if="${#fields.hasErrors('password')}"
+                             th:errors="*{password}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="passwordConfirmed" class="form-label">
+                            Confirm password
+                        </label>
+                        <input type="password" th:field="*{passwordConfirmed}"
+                               class="form-control" required>
+                        <div class="text-danger"
+                             th:if="${#fields.hasErrors('passwordConfirmed')}"
+                             th:errors="*{passwordConfirmed}"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Register
+                    </button>
+
+                </form>
+
+                <hr>
+
+                <p class="text-center mb-2">
+                    Already have an account?
+                    <a th:href="@{/login}">Log in</a>
+                </p>
+
+                <div class="text-center">
+                    <a th:href="@{/songs}">Browse songs without logging in</a>
+                </div>
+
+            </div>
         </div>
 
-        <div>
-            <label>Email</label>
-            <input type="email" th:field="*{email}" required>
-            <p th:if="${#fields.hasErrors('email')}"
-               th:errors="*{email}"></p>
-        </div>
-
-        <div>
-            <label>Password</label>
-            <input type="password" th:field="*{password}" required>
-            <p th:if="${#fields.hasErrors('password')}"
-               th:errors="*{password}"></p>
-        </div>
-
-        <div>
-            <label>Confirm password</label>
-            <input type="password" th:field="*{passwordConfirmed}" required>
-            <p th:if="${#fields.hasErrors('passwordConfirmed')}"
-               th:errors="*{passwordConfirmed}"></p>
-        </div>
-
-        <button type="submit">Register</button>
-
-    </form>
-
-    <p><a th:href="@{/login}">Already have an account? Log in</a></p>
+    </div>
 
 </body>
 </html>

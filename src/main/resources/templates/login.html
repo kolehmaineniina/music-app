@@ -4,32 +4,63 @@
 <head>
     <meta charset="UTF-8">
     <title>MusicApp - Login</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 
-<body>
+<body class="bg-light">
 
-    <h1>MusicApp</h1>
-    <h2>Login</h2>
+    <div class="container mt-5" style="max-width: 450px;">
 
-    <div th:if="${param.error}">
-        Invalid username or password.
+        <h1 class="text-center mb-4">MusicApp</h1>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <h2 class="h4 mb-4">Login</h2>
+
+                <div th:if="${param.error}" class="alert alert-danger">
+                    Invalid username or password.
+                </div>
+
+                <div th:if="${param.logout}" class="alert alert-success">
+                    You have been logged out.
+                </div>
+
+                <form th:action="@{/login}" method="post">
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" id="username" name="username"
+                               class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password"
+                               class="form-control" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Login
+                    </button>
+
+                </form>
+
+                <hr>
+
+                <p class="text-center mb-2">
+                    Don't have an account?
+                    <a th:href="@{/register}">Sign up</a>
+                </p>
+
+                <div class="text-center">
+                    <a th:href="@{/songs}">Browse songs without logging in</a>
+                </div>
+
+            </div>
+        </div>
+
     </div>
-
-    <div th:if="${param.logout}">
-        You have been logged out.
-    </div>
-
-    <form th:action="@{/login}" method="post">
-
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-
-        <button type="submit">Login</button>
-
-    </form>
 
 </body>
 </html>

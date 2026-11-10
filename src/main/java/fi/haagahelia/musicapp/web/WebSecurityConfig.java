@@ -31,6 +31,12 @@ public class WebSecurityConfig {
                 ).permitAll()
                 .anyRequest().authenticated()
             )
+            .csrf(csrf -> csrf
+            .ignoringRequestMatchers("/h2-console/**")
+        )
+        .headers(headers -> headers
+            .frameOptions(frameOptions -> frameOptions.sameOrigin())
+        )
             .formLogin(form -> form
                 .loginPage("/login")
                 .defaultSuccessUrl("/songs")

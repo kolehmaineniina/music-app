@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-// Concurrency control: enable locking with JPA @Version?
+// TO DO: Concurrency control: enable locking with JPA @Version?
+
 @Controller 
 public class SubmissionController {
     private final SubmissionService submissionService;
